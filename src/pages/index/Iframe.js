@@ -19,7 +19,9 @@ const Iframe = () => {
     const toast = useToast();
     const [state, setState] = React.useState(status.redirecting);
 
-    React.useEffect(() => {}, []);
+    React.useEffect(() => {
+        queryCountdown();
+    }, []);
 
     const queryCountdown = async () => {
         const { code, msg, info } = await Api.countdown(location.href).catch((e) => e);
