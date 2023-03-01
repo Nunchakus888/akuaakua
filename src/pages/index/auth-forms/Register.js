@@ -57,6 +57,7 @@ const Register = () => {
                     email: Yup.string().email('Must be a valid email').max(255).required('Email is required')
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                    console.log('----values', values);
                     try {
                         setStatus({ success: false });
                         setSubmitting(false);
@@ -65,6 +66,7 @@ const Register = () => {
                         setErrors({ submit: err.message });
                         setSubmitting(false);
                     }
+                    // window.open('/payment/');
                 }}
             >
                 {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
