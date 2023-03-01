@@ -1,22 +1,7 @@
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 
 // material-ui
-import {
-    Button,
-    Checkbox,
-    Divider,
-    FormControlLabel,
-    FormHelperText,
-    Grid,
-    Link,
-    IconButton,
-    InputAdornment,
-    InputLabel,
-    OutlinedInput,
-    Stack,
-    Typography
-} from '@mui/material';
+import { Button, Divider, FormHelperText, Grid, OutlinedInput, Stack, Typography } from '@mui/material';
 
 // third party
 import * as Yup from 'yup';
@@ -27,23 +12,29 @@ import FirebaseSocial from './FirebaseSocial';
 import AnimateButton from 'components/@extended/AnimateButton';
 
 // assets
-import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import { useTheme } from '@mui/material/styles';
+import * as Api from 'api';
+import useToast from 'utils/hooks/useToast';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const Register = () => {
     const theme = useTheme();
+    const toast = useToast();
 
-    const [checked, setChecked] = React.useState(false);
-
-    const [showPassword, setShowPassword] = React.useState(false);
-    const handleClickShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
-
-    const handleMouseDownPassword = (event) => {
-        event.preventDefault();
+    const jump2pay = async (values, cb) => {
+        const { code, msg, info } = await Api.register(values).catch((e) => e);
+        if (code === 0) {
+            const { pay_url } = info || {};
+            if (pay_url) {
+                location.href = pay_url;
+            } else {
+                toast(msg || Api.ERROR_MESSAGE, { variant: 'error' });
+            }
+        } else {
+            toast(msg || Api.ERROR_MESSAGE, { variant: 'error' });
+        }
+        cb?.();
     };
 
     return (
@@ -56,17 +47,10 @@ const Register = () => {
                 validationSchema={Yup.object().shape({
                     email: Yup.string().email('Must be a valid email').max(255).required('Email is required')
                 })}
-                onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                    console.log('----values', values);
-                    try {
-                        setStatus({ success: false });
-                        setSubmitting(false);
-                    } catch (err) {
-                        setStatus({ success: false });
-                        setErrors({ submit: err.message });
-                        setSubmitting(false);
-                    }
-                    // window.open('/payment/');
+                onSubmit={async (values, action) => {
+                    jump2pay(values, () => {
+                        action.setSubmitting(!1);
+                    });
                 }}
             >
                 {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (

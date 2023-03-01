@@ -5,16 +5,11 @@ import { Box, Grid } from '@mui/material';
 
 // project import
 import AuthCard from './AuthCard';
-import Logo from 'components/Logo';
-import AuthFooter from 'components/cards/AuthFooter';
+// import Logo from 'components/Logo';
+// import AuthFooter from 'components/cards/AuthFooter';
 
-// assets
-import AuthBackground from 'assets/images/auth/AuthBackground';
-
-// ==============================|| AUTHENTICATION - WRAPPER ||============================== //
-
-const AuthWrapper = ({ children }) => (
-    <Box sx={{ minHeight: '100vh', background: '#1E1E1E' }}>
+const AuthWrapper = ({ children, style }) => (
+    <Box sx={{ minHeight: '100vh', textTransform: 'uppercase', ...style }}>
         <Grid
             container
             direction="column"

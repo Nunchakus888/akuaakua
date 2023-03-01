@@ -7,6 +7,7 @@ import MinimalLayout from 'layout/MinimalLayout';
 
 // render - login
 const Index = Loadable(lazy(() => import('pages/index/Index')));
+const Iframe = Loadable(lazy(() => import('pages/index/Iframe')));
 
 // ==============================|| AUTH ROUTING ||============================== //
 
@@ -22,6 +23,10 @@ const IndexRouters = {
             // 首页/支付
             path: '/payment',
             element: <Index />
+        },
+        {
+            path: '/payment/iframe',
+            element: <Iframe />
         },
         {
             // newTab

@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import { SnackbarProvider } from 'notistack';
 
 // scroll bar
 import 'simplebar/src/simplebar.css';
@@ -24,7 +25,9 @@ root.render(
     <StrictMode>
         <ReduxProvider store={store}>
             <BrowserRouter basename="/">
-                <App />
+                <SnackbarProvider maxSnack={1}>
+                    <App />
+                </SnackbarProvider>
             </BrowserRouter>
         </ReduxProvider>
     </StrictMode>

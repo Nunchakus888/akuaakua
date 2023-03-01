@@ -1,43 +1,75 @@
 import axios from './axios';
 
+export const ERROR_MESSAGE = 'Unknown Exception';
+// https://github.com/mingzhang96/webui-control#api-doc-for-front
+
 /**
- * 登录
- * @request
- *    email string 帐号
- *    password string 密码
- *    remember bool 是否记住
- *  @return
- *    {}
+ {
+    'code': 0, # 状态码，非0就是错误码
+    'info': 下面接口的响应
+    'msg': 状态码不为0时的错误信息
+}
  */
-export const login = (email, password, remember) => {
-    const data = {};
-    data['email'] = email;
-    data['password'] = password;
-    data['remember'] = remember;
+
+/**
+ *  @return
+    'instance_url': "xxxxxxxxx", # 实例url
+     102: token非法
+     500: 内部错误
+ */
+export const register = ({ email }) => {
     return axios({
         method: 'post',
-        url: `/v1/login`,
-        // headers: {
-        //   'Content-Type': 'application/json; charset=UTF-8',
-        // },
-        data
+        url: '/pay',
+        data: {
+            email
+        }
     });
 };
 
 /**
- * 登出
- * @request
- *  @return
- *    {}
+ * @param token
+ * @return {Promise<AxiosResponse<any>>}
+    {
+        'instance_url': "xxxxxxxxx", # 实例url
+    }
  */
-export const logout = () => {
-    const data = {};
+export const queryInstanceUrl = (token) => {
     return axios({
-        method: 'get',
-        url: `/v1/logout`,
-        // headers: {
-        //   'Content-Type': 'application/json; charset=UTF-8',
-        // },
-        data
+        method: 'post',
+        url: '/get_instance_url_by_token',
+        data: {
+            token
+        }
+    });
+};
+
+/**
+ * @param instance_url 用户链接
+ * @return     'pay_url': 'xxxx' # 支付用的链接，由前端来决定如何跳转
+ * 500: 内部错误
+ */
+export const renew = (instance_url) => {
+    return axios({
+        method: 'post',
+        url: '/get_instance_url_by_token',
+        data: {
+            instance_url
+        }
+    });
+};
+
+/**
+ * get_remain_time
+ * @param instance_url
+ * @return     'remain_time': 100 # int 剩余时间，单位为秒
+ */
+export const countdown = (instance_url) => {
+    return axios({
+        method: 'post',
+        url: '/get_remain_time',
+        data: {
+            instance_url
+        }
     });
 };
