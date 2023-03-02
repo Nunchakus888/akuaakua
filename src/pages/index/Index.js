@@ -44,7 +44,7 @@ const Index = () => {
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <Stack direction="column" justifyContent="center" gap={3} alignItems="center" sx={{ mb: { xs: -0.5, sm: 0.5 } }}>
-                        <Typography variant="h3" color={theme.palette.common.white}>
+                        <Typography variant="h2" color={theme.palette.common.white}>
                             {state.title}
                         </Typography>
                         <Typography variant="body1" color={theme.palette.text.secondary}>

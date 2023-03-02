@@ -15,7 +15,7 @@ import AnimateButton from 'components/@extended/AnimateButton';
 import { useTheme } from '@mui/material/styles';
 import * as Api from 'api';
 import useToast from 'utils/hooks/useToast';
-
+import { DividerMsg } from './pageStatus';
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const Register = () => {
@@ -106,16 +106,7 @@ const Register = () => {
                                     </Button>
                                 </AnimateButton>
                             </Grid>
-                            <Grid item xs={12}>
-                                <Divider>
-                                    <Typography variant="caption" color={theme.palette.text.secondary}>
-                                        Scan QR codes below to contact customer service{' '}
-                                    </Typography>
-                                </Divider>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <FirebaseSocial />
-                            </Grid>
+                            <DividerMsg />
                         </Grid>
                     </form>
                 )}

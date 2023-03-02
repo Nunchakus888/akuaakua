@@ -49,7 +49,7 @@ export const queryInstanceUrl = (token) => {
  * @return     'pay_url': 'xxxx' # 支付用的链接，由前端来决定如何跳转
  * 500: 内部错误
  */
-export const renew = (instance_url) => {
+export const iframe2pay = (instance_url) => {
     return axios({
         method: 'post',
         url: '/get_instance_url_by_token',

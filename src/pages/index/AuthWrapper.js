@@ -9,7 +9,7 @@ import AuthCard from './AuthCard';
 // import AuthFooter from 'components/cards/AuthFooter';
 
 const AuthWrapper = ({ children, style }) => (
-    <Box sx={{ minHeight: '100vh', textTransform: 'uppercase', ...style }}>
+    <Box id="if-content" sx={{ minHeight: '100vh', textTransform: 'uppercase', ...style }}>
         <Grid
             container
             direction="column"
