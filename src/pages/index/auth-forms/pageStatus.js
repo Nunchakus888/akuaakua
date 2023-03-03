@@ -50,6 +50,9 @@ const contentCenter = (text) => (
 export const closeIframe = (url) => {
     window.parent.postMessage('close-iframe', url);
 };
+export const openIframe = (url) => {
+    window.parent.postMessage('open-iframe', url);
+};
 export const onIEvent = (dom, cb) => {
     window.addEventListener(
         'message',

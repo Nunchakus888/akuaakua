@@ -6,7 +6,7 @@ import { ClickAwayListener, Grid, Stack, Typography, Alert, AlertTitle, Button, 
 // project import
 import AuthWrapper from './AuthWrapper';
 import { useTheme } from '@mui/material/styles';
-import { countdownFmt, onIEvent, pageState } from './auth-forms/pageStatus';
+import { countdownFmt, onIEvent, openIframe, pageState } from './auth-forms/pageStatus';
 import * as Api from 'api';
 import { UseToast as useToast } from 'utils/hooks';
 
@@ -31,6 +31,14 @@ const Iframe = () => {
                 const { remain_time, deadline = 2 * 60 * 1000 } = info || {};
                 if (remain_time < 1) {
                     cancel();
+                    const cDom = boxRef.current?.querySelector('#if-content');
+                    // 倒计时结束，若窗口关闭，则唤起；
+                    try {
+                        if (cDom.style.display === 'none') {
+                            cDom.style.display = 'block';
+                            openIframe(location.href);
+                        }
+                    } catch (e) {}
                     setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
                 }
 
