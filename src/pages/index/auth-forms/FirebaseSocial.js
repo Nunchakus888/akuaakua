@@ -1,6 +1,6 @@
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { useMediaQuery, Button, Stack, Grid } from '@mui/material';
+import { useMediaQuery, IconButton, Stack, Grid, Link } from '@mui/material';
 
 // assets
 import Google from 'assets/images/icons/google.svg';
@@ -12,7 +12,8 @@ import Facebook from 'assets/images/icons/facebook.svg';
 const assets = [
     {
         src: '/assets/dc.png',
-        alt: 'dc'
+        alt: 'dc',
+        link: 'https://discord.gg/D5yQZ7EC'
     },
     {
         src: '/assets/wx.png',
@@ -21,6 +22,7 @@ const assets = [
     {
         src: '/assets/qq.png',
         alt: 'qq'
+        // link: 'https://qm.qq.com/cgi-bin/qm/qr?k=oKYGgKGghfrh6hMMIz-fFCJmdR-oY5Uk&authKey=oSBUW9f+I5SLAeRdjmCALwKKJkEF4EOrgQmaOOXvDqmPO4JlrEvcJzMeL2OR1Tsb&noverify=0&personal_qrcode_source=0'
     }
 ];
 const FirebaseSocial = () => {
@@ -50,7 +52,9 @@ const FirebaseSocial = () => {
         >
             {assets.map((i) => (
                 <Grid item xs={4}>
-                    <img style={{ width: '100%', objectFit: 'contain' }} alt="" {...i} />
+                    <Link href={i.link} target="_blank">
+                        <img style={{ width: '100%', objectFit: 'contain' }} alt="" {...i} />
+                    </Link>
                 </Grid>
             ))}
         </Grid>
