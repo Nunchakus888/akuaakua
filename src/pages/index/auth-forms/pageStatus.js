@@ -246,8 +246,8 @@ export const pageState = {
                 </Typography>
             </Stack>
         ),
-        subTitle: contentCenter(`Sorry, you did not complete the payment within 2 minutes.
-                You can refresh the page to try again.`),
+        subTitle: contentCenter(`SORRY, YOU DID NOT COMPLETE THE PAYMENT.
+         PLEASE PRESS THE RETRY BUTTON TO PAY AGAIN`),
         link: '',
         actionCb() {
             const click2return = () => {
@@ -263,13 +263,13 @@ export const pageState = {
             };
             return (
                 <Stack direction="row" justifyContent="space-around" gap={2}>
-                    {this.link && (
+                    {/*{this.link && (
                         <Button variant="outlined" color="primary" size="large" fullWidth onClick={click2return}>
                             RETURN
                         </Button>
-                    )}
+                    )}*/}
 
-                    <Button variant="outlined" color="success" size="large" fullWidth onClick={click2retry}>
+                    <Button variant="outlined" color="success" size="large" fullWidth onClick={click2return}>
                         RETRY
                     </Button>
                 </Stack>
