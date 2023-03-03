@@ -85,7 +85,7 @@ export const pageState = {
     iframeSessionEnd: {
         title: (
             <Stack direction="column" justifyContent="center" alignItems="center">
-                <VerifiedIcon color="success" sx={{ width: '100px', height: '100px', mb: 2 }} />
+                <VerifiedIcon color="info" sx={{ width: '100px', height: '100px', mb: 2 }} />
                 <Typography variant="h2" color={(theme) => theme.palette.common.white}>
                     Session ENDED
                 </Typography>
@@ -93,15 +93,31 @@ export const pageState = {
         ),
         subTitle: contentCenter(`Sorry, your usage has ended.
          Thank you for your support`),
-        ActionCb() {
+        ActionCb(countdown) {
             return (
                 <Stack gap={5} direction="column">
-                    <Stack direction="row" justifyContent="space-around" gap={2}>
-                        <Button variant="contained" color="primary" size="large" fullWidth onClick={jump2start}>
-                            Retry
-                        </Button>
-                    </Stack>
-                    <DividerMsg />
+                    {countdown ? (
+                        <>
+                            <Typography variant="body1" align="center" color={(theme) => theme.palette.common.white}>
+                                Sorry, your session has ended. Please click on the button below to recharge within 2 minutes.
+                            </Typography>
+                            <Button variant="contained" color="primary" size="large" fullWidth onClick={jump2start}>
+                                pay now
+                            </Button>
+                            <Typography variant="h4" align="center" color={(theme) => theme.palette.common.white}>
+                                The link will expire in {countdownFmt(countdown)}
+                            </Typography>
+                        </>
+                    ) : (
+                        <>
+                            <Stack direction="row" justifyContent="space-around" gap={2}>
+                                <Button variant="contained" color="primary" size="large" fullWidth onClick={jump2start}>
+                                    Retry
+                                </Button>
+                            </Stack>
+                            <DividerMsg />
+                        </>
+                    )}
                 </Stack>
             );
         }
@@ -200,8 +216,15 @@ export const pageState = {
             };
 
             return (
-                <Button variant="outlined" color="success" size="large" fullWidth onClick={jump2play}>
-                    OK
+                <Button
+                    variant="outlined"
+                    color="success"
+                    size="large"
+                    fullWidth
+                    onClick={jump2play}
+                    sx={{ textTransform: 'lowercase', overflow: 'hidden' }}
+                >
+                    {this.link}
                 </Button>
             );
         }

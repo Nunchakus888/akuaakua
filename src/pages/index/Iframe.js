@@ -29,17 +29,26 @@ const Iframe = () => {
             const { code, msg, info } = await Api.countdown(url).catch((e) => e);
             if (code === 0) {
                 const { remain_time, deadline = 2 * 60 * 1000 } = info || {};
-                console.log('----remain_time', remain_time);
                 if (remain_time < 1) {
                     cancel();
-                    setState(pageState.iframeSessionEnd);
-                    // state.waitingTime = waitingTime;
+                    setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
                 }
 
-                return remain_time;
+                let wait_time = 0;
+                // 存在deadline，且在当前时间之后，进入倒计时
+                if (deadline) {
+                    if (deadline > Date.now()) {
+                        wait_time = (deadline - Date.now()) / 1000;
+                    }
+                    setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
+                }
+                return {
+                    remain_time,
+                    wait_time
+                };
             } else {
                 cancel();
-                setState(pageState.iframeSessionEnd);
+                setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
             }
         },
         {
@@ -50,7 +59,7 @@ const Iframe = () => {
     );
 
     const [countdown] = useCountDown({
-        leftTime: (data || 0) * 1000
+        leftTime: (data?.remain_time || data?.wait_time || 0) * 1000
     });
 
     React.useEffect(() => {
@@ -64,8 +73,8 @@ const Iframe = () => {
                 <ClickAwayListener
                     onClickAway={(e) => {
                         // todo session end card
-                        console.log('----data', data);
-                        if (data) state.closeIframe(url);
+                        console.log('onClickAway----', data);
+                        if (data?.remain_time) state.closeIframe(url);
                     }}
                 >
                     <Grid container spacing={3}>
@@ -86,7 +95,7 @@ const Iframe = () => {
                             </Stack>
                         </Grid>
                         <Grid item xs={12}>
-                            {state.ActionCb?.() || state.action}
+                            {state.ActionCb?.(countdown) || state.action}
                         </Grid>
                     </Grid>
                 </ClickAwayListener>
