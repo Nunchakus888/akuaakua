@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 // material-ui
 import { Button, Grid, Stack, Typography } from '@mui/material';
@@ -8,35 +8,49 @@ import { Button, Grid, Stack, Typography } from '@mui/material';
 import AuthWrapper from './AuthWrapper';
 import { useTheme } from '@mui/material/styles';
 import * as Api from 'api';
-import useToast from 'utils/hooks/useToast';
-import { status } from './auth-forms/pageStatus';
+import { UseToast as useToast } from 'utils/hooks';
+import { pageState } from './auth-forms/pageStatus';
+
+const cardStatus = {
+    fail: 'fail',
+    success: 'success'
+};
 
 const Index = () => {
     const theme = useTheme();
     const toast = useToast();
-    const { token } = useParams();
+    const navigate = useNavigate();
+    const { token, status } = useParams();
 
-    const [state, setState] = React.useState(status[token ? 'redirecting' : 'register']);
+    const current = token ? 'loading' : cardStatus[status] || 'register';
+    const [state, setState] = React.useState(pageState[current]);
 
     const queryInstanceUrl = async () => {
         if (!token) return;
         const { code, msg, info } = await Api.queryInstanceUrl(token).catch((e) => e);
         if (code === 0) {
             const { instance_url: link } = info || {};
+            // todo token 无效
             if (link) {
-                setState({ ...status.payed, link });
-                return;
+                // 有link，不一定成功；
+                setState({ ...pageState[cardStatus[status]], link });
+                return link;
             } else {
                 toast(msg || Api.ERROR_MESSAGE, { variant: 'error' });
             }
         } else {
             toast(msg || Api.ERROR_MESSAGE, { variant: 'error' });
         }
-        setState({ ...status.fail });
+
+        setState({ ...pageState.fail, token });
     };
 
     React.useEffect(() => {
-        queryInstanceUrl();
+        if (status && !cardStatus[status]) {
+            navigate('/payment', { replace: !0 });
+        } else {
+            queryInstanceUrl();
+        }
     }, [token]);
 
     return (

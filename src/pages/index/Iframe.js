@@ -6,9 +6,9 @@ import { ClickAwayListener, Grid, Stack, Typography, Alert, AlertTitle, Button, 
 // project import
 import AuthWrapper from './AuthWrapper';
 import { useTheme } from '@mui/material/styles';
-import { countdownFmt, onIEvent, status } from './auth-forms/pageStatus';
+import { countdownFmt, onIEvent, pageState } from './auth-forms/pageStatus';
 import * as Api from 'api';
-import useToast from 'utils/hooks/useToast';
+import { UseToast as useToast } from 'utils/hooks';
 
 // ================================|| LOGIN ||================================ //
 
@@ -20,8 +20,8 @@ const Iframe = () => {
     const boxRef = React.useRef();
     const url = (location.search.match(/^\?url=(.*)$/) || [])[1];
 
-    status.iframeInit.url = url;
-    const [state, setState] = React.useState(status.iframeInit);
+    pageState.iframeInit.url = url;
+    const [state, setState] = React.useState(pageState.iframeInit);
 
     // 5s 一纠偏
     const { data, run, cancel, loading } = useRequest(
@@ -32,12 +32,14 @@ const Iframe = () => {
                 console.log('----remain_time', remain_time);
                 if (remain_time < 1) {
                     cancel();
+                    setState(pageState.iframeSessionEnd);
                     // state.waitingTime = waitingTime;
                 }
 
                 return remain_time;
             } else {
                 cancel();
+                setState(pageState.iframeSessionEnd);
             }
         },
         {

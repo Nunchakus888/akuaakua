@@ -14,28 +14,16 @@ import AnimateButton from 'components/@extended/AnimateButton';
 // assets
 import { useTheme } from '@mui/material/styles';
 import * as Api from 'api';
-import useToast from 'utils/hooks/useToast';
+import { UseToast as useToast } from 'utils/hooks';
 import { DividerMsg } from './pageStatus';
 // ============================|| FIREBASE - LOGIN ||============================ //
 
-const Register = () => {
+import { jump2pay } from './pageStatus';
+import { withSnackbar } from 'notistack';
+
+const Register = (props) => {
     const theme = useTheme();
     const toast = useToast();
-
-    const jump2pay = async (values, cb) => {
-        const { code, msg, info } = await Api.register(values).catch((e) => e);
-        if (code === 0) {
-            const { pay_url } = info || {};
-            if (pay_url) {
-                location.href = pay_url;
-            } else {
-                toast(msg || Api.ERROR_MESSAGE, { variant: 'error' });
-            }
-        } else {
-            toast(msg || Api.ERROR_MESSAGE, { variant: 'error' });
-        }
-        cb?.();
-    };
 
     return (
         <>
@@ -48,9 +36,13 @@ const Register = () => {
                     email: Yup.string().email('Must be a valid email').max(255).required('Email is required')
                 })}
                 onSubmit={async (values, action) => {
-                    jump2pay(values, () => {
-                        action.setSubmitting(!1);
-                    });
+                    jump2pay(
+                        values,
+                        () => {
+                            action.setSubmitting(!1);
+                        },
+                        props.enqueueSnackbar
+                    );
                 }}
             >
                 {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
@@ -115,4 +107,4 @@ const Register = () => {
     );
 };
 
-export default Register;
+export default withSnackbar(Register);

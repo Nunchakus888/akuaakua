@@ -6,7 +6,8 @@
 |----|----|----|----|
 |0|暂定首页/webui的域名|https://webui.makamaka.io/|dev：https://devui.makamaka.io/|
 |1|首页路径|https://webui.makamaka.io/payment/|path为payment
-|2|支付成功跳转|https://webui.makamaka.io/payment/tokenstring/| suffix token 串到path如当前格式|
+|2|支付成功跳转|https://webui.makamaka.io/payment/success/tokenstring/| 如有token，不论成功与否 都需要 suffix token 串到path如当前格式|
+|2|支付失败跳转|https://webui.makamaka.io/payment/fail/tokenstring/| 如有token，不论成功与否 都需要 suffix token 串到path如当前格式|
 |3|点击实例地址跳转到webui|https://webui.makamaka.io/dynamic_path/ |dynamic_path 由服务端决定随机生成，给个确定的格式|
 |4|webui充值/续费|支付完成跳转链接同2|用户可选返回原页面/关闭当前页面|
 

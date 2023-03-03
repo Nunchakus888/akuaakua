@@ -3,11 +3,27 @@ import { Button, Divider, Grid, Stack, Typography } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Link } from 'react-router-dom';
 import CancelIcon from '@mui/icons-material/Cancel';
+import VerifiedIcon from '@mui/icons-material/Verified';
 import React from 'react';
 import FirebaseSocial from './FirebaseSocial';
 
 import * as Api from 'api';
-import useToast from 'utils/hooks/useToast';
+import { UseToast as useToast, toast } from 'utils/hooks';
+
+export async function jump2pay(values, cb, toastFunc) {
+    const { code, msg, info } = await Api.register(values).catch((e) => e);
+    if (code === 0) {
+        const { pay_url } = info || {};
+        if (pay_url) {
+            location.href = pay_url;
+        } else {
+            toast(toastFunc, msg || Api.ERROR_MESSAGE, { variant: 'error' });
+        }
+    } else {
+        toast(toastFunc, msg || Api.ERROR_MESSAGE, { variant: 'error' });
+    }
+    cb?.();
+}
 
 export const DividerMsg = () => (
     <>
@@ -56,11 +72,39 @@ export const countdownFmt = (countdown) => {
     return new Date(countdown).toUTCString().slice(17, 25);
 };
 
-export const status = {
+const jump2start = () => {
+    window.parent.location.href = '/payment';
+};
+
+export const pageState = {
     register: {
         title: 'SIGN UP',
         subTitle: contentCenter('Play all AI-generated content models on the entire web for only one dollar'),
         action: <Register />
+    },
+    iframeSessionEnd: {
+        title: (
+            <Stack direction="column" justifyContent="center" alignItems="center">
+                <VerifiedIcon color="success" sx={{ width: '100px', height: '100px', mb: 2 }} />
+                <Typography variant="h2" color={(theme) => theme.palette.common.white}>
+                    Session ENDED
+                </Typography>
+            </Stack>
+        ),
+        subTitle: contentCenter(`Sorry, your usage has ended.
+         Thank you for your support`),
+        ActionCb() {
+            return (
+                <Stack gap={5} direction="column">
+                    <Stack direction="row" justifyContent="space-around" gap={2}>
+                        <Button variant="contained" color="primary" size="large" fullWidth onClick={jump2start}>
+                            Retry
+                        </Button>
+                    </Stack>
+                    <DividerMsg />
+                </Stack>
+            );
+        }
     },
     iframeInit: {
         TitleCb(countdown) {
@@ -92,17 +136,28 @@ export const status = {
                     const { pay_url } = info || {};
                     if (pay_url) {
                         window.open(pay_url, 'webui.makamaka.pay');
+                        return;
                     } else {
                         toast(msg || Api.ERROR_MESSAGE, { variant: 'error' });
                     }
                 } else {
                     toast(msg || Api.ERROR_MESSAGE, { variant: 'error' });
+                    setTimeout(() => {
+                        window.parent.location.href = '/payment';
+                    }, 3000);
                 }
             };
             return (
                 <Stack gap={5} direction="column">
                     <Stack direction="row" justifyContent="space-around" gap={2}>
-                        <Button variant="contained" color="primary" size="large" fullWidth onClick={() => this.closeIframe(this.url)}>
+                        <Button
+                            disabled={!this.remains}
+                            variant="contained"
+                            color="primary"
+                            size="large"
+                            fullWidth
+                            onClick={() => this.closeIframe(this.url)}
+                        >
                             OK
                         </Button>
                         <Button variant="contained" color="success" size="large" onClick={this.jump2pay} fullWidth>
@@ -114,7 +169,7 @@ export const status = {
             );
         }
     },
-    redirecting: {
+    loading: {
         title: 'REDIRECTING',
         subTitle: contentCenter(`You are being directed to a third-party payment page.
                 Please complete the payment within 2 minutes`),
@@ -127,7 +182,7 @@ export const status = {
             </Stack>
         )
     },
-    payed: {
+    success: {
         title: (
             <Stack direction="column" justifyContent="center" alignItems="center">
                 <CheckCircleIcon color="success" sx={{ width: '100px', height: '100px', mb: 2 }} />
@@ -139,26 +194,26 @@ export const status = {
         subTitle: contentCenter(`Click on the URL below to enter the Model MARKET.
                The URL has also been sent to your email`),
         link: '',
-        actionCb(iframe) {
-            return iframe ? (
-                <Button variant="outlined" color="success" size="large" fullWidth>
-                    RETURN
+        actionCb() {
+            const jump2play = () => {
+                window.open(this.link, 'webui.makamaka');
+            };
+
+            return (
+                <Button variant="outlined" color="success" size="large" fullWidth onClick={jump2play}>
+                    OK
                 </Button>
-            ) : (
-                <Typography
-                    align="center"
-                    component={Link}
-                    to={this.link}
-                    target="_blank"
-                    variant="body1"
-                    sx={{ textDecoration: 'none' }}
-                    color="primary"
-                >
-                    https://www.google.com/search?q=%E4%BA%8C%E7%BB%B4%E7%A0%81&rlz=1C5CHFA_enHK
-                </Typography>
             );
         }
     },
+    /**
+     * 支付 fail case
+     * 一定是独立页面存在（非iframe）
+     * 路由 /payment/?token
+     * 行为：
+     *  重试，有token继续请求支付链接
+     *  返回，返回payment页面
+     */
     fail: {
         title: (
             <Stack direction="column" justifyContent="center" alignItems="center">
@@ -171,22 +226,27 @@ export const status = {
         subTitle: contentCenter(`Sorry, you did not complete the payment within 2 minutes.
                 You can refresh the page to try again.`),
         link: '',
-        iframe: !1,
         actionCb() {
-            const onClick = () => {
-                if (this.iframe) {
-                    window.open(this.link, 'renewal');
+            const click2return = () => {
+                location.href = '/payment';
+            };
+
+            const click2retry = () => {
+                if (this.link) {
+                    location.href = this.link;
                 } else {
-                    // todo
-                    location.href = '/payment';
+                    location.replace('/payment');
                 }
             };
             return (
-                <Stack direction="row" justifyContent="space-around">
-                    {/*<Button variant="outlined" color="primary" size="large" fullWidth>
-                        RETURN
-                    </Button>*/}
-                    <Button variant="outlined" color="success" size="large" onClick={onClick} fullWidth>
+                <Stack direction="row" justifyContent="space-around" gap={2}>
+                    {this.link && (
+                        <Button variant="outlined" color="primary" size="large" fullWidth onClick={click2return}>
+                            RETURN
+                        </Button>
+                    )}
+
+                    <Button variant="outlined" color="success" size="large" fullWidth onClick={click2retry}>
                         RETRY
                     </Button>
                 </Stack>

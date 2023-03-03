@@ -11,6 +11,7 @@ const Iframe = Loadable(lazy(() => import('pages/index/Iframe')));
 
 // ==============================|| AUTH ROUTING ||============================== //
 
+// const payment = /^\/payment\/(success|fail)(\/[a-zA-Z0-9_\-]*)?/g;
 const IndexRouters = {
     path: '/',
     element: <MinimalLayout />,
@@ -25,12 +26,16 @@ const IndexRouters = {
             element: <Index />
         },
         {
-            path: '/payment/iframe',
+            path: '/iframe',
             element: <Iframe />
         },
         {
-            // newTab
-            path: '/payment/:token',
+            path: '/payment/:status',
+            element: <Index />
+        },
+        {
+            // fail 无token
+            path: '/payment/:status/:token',
             element: <Index />
         },
         {
