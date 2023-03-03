@@ -144,9 +144,8 @@ export const pageState = {
          With just a strand of inspiration and creativity from you,
          you can create your own works of art`),
         url: '',
-        remains: 0,
         closeIframe,
-        ActionCb() {
+        ActionCb(countdown) {
             const toast = useToast();
 
             this.jump2pay = async () => {
@@ -170,7 +169,7 @@ export const pageState = {
                 <Stack gap={5} direction="column">
                     <Stack direction="row" justifyContent="space-around" gap={2}>
                         <Button
-                            disabled={!this.remains}
+                            disabled={!countdown}
                             variant="contained"
                             color="primary"
                             size="large"

@@ -28,27 +28,31 @@ const Iframe = () => {
         async () => {
             const { code, msg, info } = await Api.countdown(url).catch((e) => e);
             if (code === 0) {
-                const { remain_time, deadline = 2 * 60 * 1000 } = info || {};
-                if (remain_time < 1) {
-                    cancel();
-                    const cDom = boxRef.current?.querySelector('#if-content');
-                    // 倒计时结束，若窗口关闭，则唤起；
-                    try {
-                        if (cDom.style.display === 'none') {
-                            cDom.style.display = 'block';
-                            openIframe(location.href);
-                        }
-                    } catch (e) {}
-                    setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
-                }
-
+                const { remain_time: usable_deadline, deadline: waiting_deadline } = info || {};
+                let remain_time = usable_deadline - Date.now();
                 let wait_time = 0;
-                // 存在deadline，且在当前时间之后，进入倒计时
-                if (deadline) {
-                    if (deadline > Date.now()) {
-                        wait_time = (deadline - Date.now()) / 1000;
+
+                if (remain_time > 0) {
+                    if (remain_time < 1) {
+                        cancel();
+                        const cDom = boxRef.current?.querySelector('#if-content');
+                        // 倒计时结束，若窗口关闭，则唤起；
+                        try {
+                            if (cDom.style.display === 'none') {
+                                cDom.style.display = 'block';
+                                openIframe(location.href);
+                            }
+                        } catch (e) {}
+                        setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
                     }
-                    setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
+                } else {
+                    // 存在deadline，且在当前时间之后，进入倒计时
+                    if (waiting_deadline) {
+                        if (waiting_deadline > Date.now()) {
+                            wait_time = waiting_deadline - Date.now();
+                        }
+                        setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
+                    }
                 }
                 return {
                     remain_time,
@@ -61,17 +65,18 @@ const Iframe = () => {
         },
         {
             manual: !0,
-            pollingInterval: 5000,
+            pollingInterval: 10000,
             pollingErrorRetryCount: 3
         }
     );
 
     const [countdown] = useCountDown({
-        leftTime: (data?.remain_time || data?.wait_time || 0) * 1000
+        leftTime: data?.remain_time || data?.wait_time || 0
     });
 
     React.useEffect(() => {
         run();
+        // 每次切换webui试图，重新计算倒计时；
         onIEvent(boxRef.current?.querySelector('#if-content'), run);
     }, []);
 
