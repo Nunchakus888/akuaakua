@@ -1,6 +1,6 @@
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { useMediaQuery, Button, Stack } from '@mui/material';
+import { useMediaQuery, Button, Stack, Grid } from '@mui/material';
 
 // assets
 import Google from 'assets/images/icons/google.svg';
@@ -9,6 +9,20 @@ import Facebook from 'assets/images/icons/facebook.svg';
 
 // ==============================|| FIREBASE - SOCIAL BUTTON ||============================== //
 
+const assets = [
+    {
+        src: '/assets/dc.png',
+        alt: 'dc'
+    },
+    {
+        src: '/assets/wx.png',
+        alt: 'wx'
+    },
+    {
+        src: '/assets/qq.png',
+        alt: 'qq'
+    }
+];
 const FirebaseSocial = () => {
     const theme = useTheme();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
@@ -26,40 +40,20 @@ const FirebaseSocial = () => {
     };
 
     return (
-        <Stack
+        <Grid
+            container
+            xs={12}
             direction="row"
             spacing={matchDownSM ? 1 : 2}
             justifyContent={matchDownSM ? 'space-around' : 'space-between'}
             sx={{ '& .MuiButton-startIcon': { mr: matchDownSM ? 0 : 1, ml: matchDownSM ? 0 : -0.5 } }}
         >
-            <Button
-                variant="outlined"
-                color="secondary"
-                fullWidth={!matchDownSM}
-                startIcon={<img src={Google} alt="Google" />}
-                onClick={googleHandler}
-            >
-                {!matchDownSM && 'Google'}
-            </Button>
-            <Button
-                variant="outlined"
-                color="secondary"
-                fullWidth={!matchDownSM}
-                startIcon={<img src={Twitter} alt="Twitter" />}
-                onClick={twitterHandler}
-            >
-                {!matchDownSM && 'Twitter'}
-            </Button>
-            <Button
-                variant="outlined"
-                color="secondary"
-                fullWidth={!matchDownSM}
-                startIcon={<img src={Facebook} alt="Facebook" />}
-                onClick={facebookHandler}
-            >
-                {!matchDownSM && 'Facebook'}
-            </Button>
-        </Stack>
+            {assets.map((i) => (
+                <Grid item xs={4}>
+                    <img style={{ width: '100%', objectFit: 'contain' }} alt="" {...i} />
+                </Grid>
+            ))}
+        </Grid>
     );
 };
 
