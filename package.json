@@ -50,6 +50,7 @@
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
+        "deploy": "yarn build && git add . && git commit -am 'fixes' && git push",
         "test": "react-scripts test",
         "eject": "react-scripts eject"
     },

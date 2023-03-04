@@ -47,11 +47,10 @@ const Iframe = () => {
                 deadline.wait_time = waiting_deadline;
             }
 
-            // 无可用计时
-            if (!deadline.remain_time) {
-                setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
-            } else {
+            if (deadline.remain_time) {
                 setState(pageState.iframeInit);
+            } else {
+                setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
             }
             setDeadline({ ...deadline });
         } else {
