@@ -50,6 +50,8 @@ const Iframe = () => {
             // 无可用计时
             if (!deadline.remain_time) {
                 setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
+            } else {
+                setState(pageState.iframeInit);
             }
             setDeadline({ ...deadline });
         } else {

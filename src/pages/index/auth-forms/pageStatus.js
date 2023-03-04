@@ -224,7 +224,8 @@ export const pageState = {
         link: '',
         actionCb() {
             const jump2play = () => {
-                window.open(this.link, 'webui.makamaka');
+                // window.open(this.link, 'webui.makamaka');
+                window.open(this.link);
             };
 
             return (
