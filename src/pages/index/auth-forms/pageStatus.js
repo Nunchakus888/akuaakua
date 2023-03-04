@@ -47,7 +47,7 @@ async function jump2renew(link, currentWindow = false) {
     }
     setTimeout(() => {
         window.parent.location.href = '/payment';
-    }, 1500);
+    }, 3000);
 }
 
 export const DividerMsg = () => (
@@ -107,7 +107,9 @@ export const jump2start = () => {
 export const pageState = {
     register: {
         title: 'SIGN UP',
-        subTitle: contentCenter('Play all AI-generated content models on the entire web for only one dollar'),
+        subTitle: contentCenter(
+            "SUPER DEAL! UNLEASH YOUR CREATIVITY WITH OUR SERVER AND ACCESS VARIOUS AIGC MODELS FOR JUST $0.5 (ORIGINAL PRICE $1). WITH AN RTX 3090 GRAPHICS CARD, 4-CORE CPU WITH 32GB RAM, AND 64GB STORAGE SPACE, YOU'LL HAVE THE POWER TO CREATE YOUR ARTWORK LIKE NEVER BEFORE"
+        ),
         action: <Register />
     },
     iframeSessionEnd: {
