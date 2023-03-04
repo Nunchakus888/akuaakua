@@ -8,7 +8,8 @@ import React from 'react';
 import FirebaseSocial from './FirebaseSocial';
 
 import * as Api from 'api';
-import { UseToast as useToast, toast } from 'utils/hooks';
+import { toast } from 'utils/hooks';
+import { message } from 'antd';
 
 export async function jump2pay(values, cb, toastFunc) {
     const { code, msg, info } = await Api.register(values).catch((e) => e);
@@ -37,10 +38,10 @@ async function jump2renew(link, currentWindow = false) {
             }
             return;
         } else {
-            // toast(msg || Api.ERROR_MESSAGE, { variant: 'error' });
+            message.error(msg || Api.ERROR_MESSAGE);
         }
     } else {
-        // toast(msg || Api.ERROR_MESSAGE, { variant: 'error' });
+        message.error(msg || Api.ERROR_MESSAGE);
         setTimeout(() => {
             window.parent.location.href = '/payment';
         }, 1500);
@@ -116,7 +117,6 @@ export const pageState = {
                 </Typography>
             </Stack>
         ),
-        jump2pay: jump2start,
         subTitle: contentCenter(`Sorry, your usage has ended.
          Thank you for your support`),
         ActionCb(countdown) {
@@ -125,9 +125,9 @@ export const pageState = {
                     {countdown ? (
                         <>
                             <Typography variant="body1" align="center" color={(theme) => theme.palette.common.white}>
-                                Sorry, your session has ended. Please click on the button below to recharge within 2 minutes.
+                                SORRY, YOU DID NOT COMPLETE THE PAYMENT. PLEASE PRESS THE RETRY BUTTON TO PAY AGAIN
                             </Typography>
-                            <Button variant="contained" color="primary" size="large" fullWidth onClick={jump2start}>
+                            <Button variant="contained" color="primary" size="large" fullWidth onClick={this.jump2pay}>
                                 pay now
                             </Button>
                             <Typography variant="h4" align="center" color={(theme) => theme.palette.common.white}>
@@ -262,12 +262,6 @@ export const pageState = {
         actionCb() {
             return (
                 <Stack direction="row" justifyContent="space-around" gap={2}>
-                    {/*{this.link && (
-                        <Button variant="outlined" color="primary" size="large" fullWidth onClick={click2return}>
-                            RETURN
-                        </Button>
-                    )}*/}
-
                     <Button variant="outlined" color="success" size="large" fullWidth onClick={() => jump2renew(this.link, !0)}>
                         RETRY
                     </Button>

@@ -26,6 +26,7 @@ const Iframe = () => {
     });
     const targetDate = React.useMemo(() => deadline.remain_time || deadline.wait_time || Date.now(), [deadline]);
 
+    pageState.iframeSessionEnd.link = url;
     pageState.iframeInit.link = url;
     const [state, setState] = React.useState(pageState.iframeInit);
 
@@ -47,8 +48,8 @@ const Iframe = () => {
             }
 
             // 无可用计时
-            if (!deadline.remain_time && !deadline.wait_time) {
-                setState(pageState.iframeSessionEnd);
+            if (!deadline.remain_time) {
+                setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
             }
             setDeadline({ ...deadline });
         } else {
@@ -61,8 +62,7 @@ const Iframe = () => {
 
     const [countdown] = useCountDown({
         targetDate,
-        interval: 1000,
-        onEnd: () => {}
+        interval: 1000
     });
 
     React.useEffect(() => {
