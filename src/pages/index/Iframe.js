@@ -20,64 +20,68 @@ const Iframe = () => {
     const boxRef = React.useRef();
     const url = (location.search.match(/^\?url=(.*)$/) || [])[1];
 
+    const [deadline, setDeadline] = React.useState({
+        remain_time: 0,
+        wait_time: 0
+    });
+    const targetDate = React.useMemo(() => deadline.remain_time || deadline.wait_time || Date.now(), [deadline]);
+
     pageState.iframeInit.url = url;
     const [state, setState] = React.useState(pageState.iframeInit);
 
-    // 5s 一纠偏
-    const { data, run, cancel, loading } = useRequest(
-        async () => {
-            const { code, msg, info } = await Api.countdown(url).catch((e) => e);
-            if (code === 0) {
-                const { remain_time: usable_deadline, deadline: waiting_deadline } = info || {};
-                let remain_time = usable_deadline - Date.now();
-                let wait_time = 0;
+    const queryDeadline = async () => {
+        const { code, msg, info } = await Api.countdown(url).catch((e) => e);
+        if (code === 0) {
+            const { remain_time: usable_deadline, deadline: waiting_deadline } = info || {};
 
-                if (remain_time > 0) {
-                    if (remain_time < 1) {
-                        cancel();
-                        const cDom = boxRef.current?.querySelector('#if-content');
-                        // 倒计时结束，若窗口关闭，则唤起；
-                        try {
-                            if (cDom.style.display === 'none') {
-                                cDom.style.display = 'block';
-                                openIframe(location.href);
-                            }
-                        } catch (e) {}
-                        setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
-                    }
-                } else {
-                    // 存在deadline，且在当前时间之后，进入倒计时
-                    if (waiting_deadline) {
-                        if (waiting_deadline > Date.now()) {
-                            wait_time = waiting_deadline - Date.now();
-                        }
-                        setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
-                    }
-                }
-                return {
-                    remain_time,
-                    wait_time
-                };
-            } else {
-                cancel();
-                setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
+            /**
+             * 提前1s切换
+             * 可用倒计时
+             */
+            if (usable_deadline - Date.now() > 1) {
+                deadline.remain_time = usable_deadline;
             }
-        },
-        {
-            manual: !0,
-            pollingInterval: 10000,
-            pollingErrorRetryCount: 3
+
+            if (waiting_deadline - Date.now() > 1) {
+                deadline.wait_time = waiting_deadline;
+            }
+
+            setDeadline({ ...deadline });
+        } else {
+            /**
+             * 切换等待状态；
+             */
+            setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
         }
-    );
+    };
 
     const [countdown] = useCountDown({
-        leftTime: data?.remain_time || data?.wait_time || 0
+        targetDate,
+        interval: 1000
     });
 
     React.useEffect(() => {
-        run();
+        if (deadline.remain_time && deadline.remain_time - Date.now() < 1) {
+            setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
+        }
+        /**
+         * 不管何种倒计时，结束前3s，拉起窗口（不可见的话）
+         */
+        if (countdown < 3) {
+            const cDom = boxRef.current?.querySelector('#if-content');
+            try {
+                if (cDom.style.display === 'none') {
+                    cDom.style.display = 'block';
+                    openIframe(location.href);
+                }
+            } catch (e) {}
+        }
+    }, [countdown]);
+
+    React.useEffect(() => {
+        queryDeadline();
         // 每次切换webui试图，重新计算倒计时；
-        onIEvent(boxRef.current?.querySelector('#if-content'), run);
+        onIEvent(boxRef.current?.querySelector('#if-content'), queryDeadline);
     }, []);
 
     return (
@@ -86,8 +90,8 @@ const Iframe = () => {
                 <ClickAwayListener
                     onClickAway={(e) => {
                         // todo session end card
-                        console.log('onClickAway----', data);
-                        if (data?.remain_time) state.closeIframe(url);
+                        console.log('onClickAway----', deadline);
+                        if (deadline.remain_time > Date.now()) state.closeIframe(url);
                     }}
                 >
                     <Grid container spacing={3}>

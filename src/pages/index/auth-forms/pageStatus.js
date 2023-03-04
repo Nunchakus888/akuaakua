@@ -63,8 +63,8 @@ export const onIEvent = (dom, cb) => {
                 dom.style.display = 'none';
             } else if (e.data === 'open-iframe') {
                 dom.style.display = 'block';
+                cb?.();
             }
-            cb?.();
         },
         false
     );

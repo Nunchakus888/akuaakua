@@ -62,7 +62,7 @@ export const iframe2pay = (instance_url) => {
 /**
  * get_remain_time
  * @param instance_url
- * @return     'remain_time': 100 # int 剩余时间，单位为秒
+ 'deadline': 1677818426233.935, # float 单位为ms
  */
 export const countdown = (instance_url) => {
     return axios({
