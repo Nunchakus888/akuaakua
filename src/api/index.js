@@ -52,7 +52,7 @@ export const queryInstanceUrl = (token) => {
 export const iframe2pay = (instance_url) => {
     return axios({
         method: 'post',
-        url: '/get_instance_url_by_token',
+        url: '/renew',
         data: {
             instance_url
         }
