@@ -6,7 +6,7 @@ import { ClickAwayListener, Grid, Stack, Typography, Alert, AlertTitle, Button, 
 // project import
 import AuthWrapper from './AuthWrapper';
 import { useTheme } from '@mui/material/styles';
-import { countdownFmt, onIEvent, openIframe, pageState } from './auth-forms/pageStatus';
+import { countdownFmt, jump2start, onIEvent, openIframe, pageState } from './auth-forms/pageStatus';
 import * as Api from 'api';
 import { UseToast as useToast } from 'utils/hooks';
 
@@ -47,10 +47,15 @@ const Iframe = () => {
                 deadline.wait_time = waiting_deadline;
             }
 
+            // 正常倒计时
             if (deadline.remain_time) {
                 setState(pageState.iframeInit);
-            } else {
+                // wait countdown
+            } else if (deadline.wait_time) {
                 setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
+                // 都没有，reset；
+            } else {
+                setState({ ...pageState.iframeSessionEnd, jump2pay: jump2start });
             }
             setDeadline({ ...deadline });
         } else {
@@ -76,7 +81,7 @@ const Iframe = () => {
         /**
          * 不管何种倒计时，结束前3s，拉起窗口（不可见的话）
          */
-        if (countdown < 3) {
+        /*if (countdown < 3) {
             const cDom = boxRef.current?.querySelector('#if-content');
             try {
                 if (cDom.style.display === 'none') {
@@ -84,7 +89,7 @@ const Iframe = () => {
                     openIframe(location.href);
                 }
             } catch (e) {}
-        }
+        }*/
     }, [countdown]);
 
     React.useEffect(() => {

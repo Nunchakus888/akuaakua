@@ -100,7 +100,7 @@ export const countdownFmt = (countdown) => {
     return new Date(countdown).toUTCString().slice(17, 25);
 };
 
-const jump2start = () => {
+export const jump2start = () => {
     window.parent.location.href = '/payment';
 };
 
