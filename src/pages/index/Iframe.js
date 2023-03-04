@@ -26,7 +26,7 @@ const Iframe = () => {
     });
     const targetDate = React.useMemo(() => deadline.remain_time || deadline.wait_time || Date.now(), [deadline]);
 
-    pageState.iframeInit.url = url;
+    pageState.iframeInit.link = url;
     const [state, setState] = React.useState(pageState.iframeInit);
 
     const queryDeadline = async () => {
@@ -46,18 +46,25 @@ const Iframe = () => {
                 deadline.wait_time = waiting_deadline;
             }
 
+            // 无可用计时
+            if (!deadline.remain_time && !deadline.wait_time) {
+                setState(pageState.iframeSessionEnd);
+            }
             setDeadline({ ...deadline });
         } else {
             /**
              * 切换等待状态；
              */
-            setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
+            setState(pageState.iframeSessionEnd);
         }
     };
 
     const [countdown] = useCountDown({
         targetDate,
-        interval: 1000
+        interval: 1000,
+        onEnd: () => {
+            setState(pageState.iframeSessionEnd);
+        }
     });
 
     React.useEffect(() => {

@@ -25,6 +25,28 @@ export async function jump2pay(values, cb, toastFunc) {
     cb?.();
 }
 
+async function jump2renew(link, currentWindow = false) {
+    const { code, msg, info } = await Api.iframe2pay(link).catch((e) => e);
+    if (code === 0) {
+        const { pay_url } = info || {};
+        if (pay_url) {
+            if (currentWindow) {
+                location.href = pay_url;
+            } else {
+                window.open(pay_url, 'webui.makamaka.pay');
+            }
+            return;
+        } else {
+            // toast(msg || Api.ERROR_MESSAGE, { variant: 'error' });
+        }
+    } else {
+        // toast(msg || Api.ERROR_MESSAGE, { variant: 'error' });
+        setTimeout(() => {
+            window.parent.location.href = '/payment';
+        }, 1500);
+    }
+}
+
 export const DividerMsg = () => (
     <>
         <Grid item xs={12}>
@@ -94,6 +116,7 @@ export const pageState = {
                 </Typography>
             </Stack>
         ),
+        jump2pay: jump2start,
         subTitle: contentCenter(`Sorry, your usage has ended.
          Thank you for your support`),
         ActionCb(countdown) {
@@ -143,28 +166,12 @@ export const pageState = {
          can be freely combined according to your preferences.
          With just a strand of inspiration and creativity from you,
          you can create your own works of art`),
-        url: '',
+        link: '',
         closeIframe,
+        jump2pay() {
+            return jump2renew(this.link);
+        },
         ActionCb(countdown) {
-            const toast = useToast();
-
-            this.jump2pay = async () => {
-                const { code, msg, info } = await Api.iframe2pay(this.url).catch((e) => e);
-                if (code === 0) {
-                    const { pay_url } = info || {};
-                    if (pay_url) {
-                        window.open(pay_url, 'webui.makamaka.pay');
-                        return;
-                    } else {
-                        toast(msg || Api.ERROR_MESSAGE, { variant: 'error' });
-                    }
-                } else {
-                    toast(msg || Api.ERROR_MESSAGE, { variant: 'error' });
-                    setTimeout(() => {
-                        window.parent.location.href = '/payment';
-                    }, 3000);
-                }
-            };
             return (
                 <Stack gap={5} direction="column">
                     <Stack direction="row" justifyContent="space-around" gap={2}>
@@ -174,7 +181,7 @@ export const pageState = {
                             color="primary"
                             size="large"
                             fullWidth
-                            onClick={() => this.closeIframe(this.url)}
+                            onClick={() => this.closeIframe(this.link)}
                         >
                             OK
                         </Button>
@@ -252,17 +259,6 @@ export const pageState = {
          PLEASE PRESS THE RETRY BUTTON TO PAY AGAIN`),
         link: '',
         actionCb() {
-            const click2return = () => {
-                location.href = '/payment';
-            };
-
-            const click2retry = () => {
-                if (this.link) {
-                    location.href = this.link;
-                } else {
-                    location.replace('/payment');
-                }
-            };
             return (
                 <Stack direction="row" justifyContent="space-around" gap={2}>
                     {/*{this.link && (
@@ -271,7 +267,7 @@ export const pageState = {
                         </Button>
                     )}*/}
 
-                    <Button variant="outlined" color="success" size="large" fullWidth onClick={click2return}>
+                    <Button variant="outlined" color="success" size="large" fullWidth onClick={() => jump2renew(this.link, !0)}>
                         RETRY
                     </Button>
                 </Stack>
