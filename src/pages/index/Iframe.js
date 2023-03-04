@@ -67,6 +67,9 @@ const Iframe = () => {
 
     React.useEffect(() => {
         if (deadline.remain_time && deadline.remain_time - Date.now() < 1) {
+            // reset remain_time, start wait_time countdown.
+            deadline.remain_time = 0;
+            setDeadline({ ...deadline });
             setState({ ...pageState.iframeSessionEnd, jump2pay: pageState.iframeInit.jump2pay });
         }
         /**
