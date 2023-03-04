@@ -62,9 +62,7 @@ const Iframe = () => {
     const [countdown] = useCountDown({
         targetDate,
         interval: 1000,
-        onEnd: () => {
-            setState(pageState.iframeSessionEnd);
-        }
+        onEnd: () => {}
     });
 
     React.useEffect(() => {

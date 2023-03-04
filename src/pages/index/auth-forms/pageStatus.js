@@ -168,10 +168,11 @@ export const pageState = {
          you can create your own works of art`),
         link: '',
         closeIframe,
-        jump2pay() {
-            return jump2renew(this.link);
-        },
         ActionCb(countdown) {
+            this.jump2pay = () => {
+                return jump2renew(this.link);
+            };
+
             return (
                 <Stack gap={5} direction="column">
                     <Stack direction="row" justifyContent="space-around" gap={2}>
