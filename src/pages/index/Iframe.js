@@ -81,15 +81,15 @@ const Iframe = () => {
         /**
          * 不管何种倒计时，结束前3s，拉起窗口（不可见的话）
          */
-        /*if (countdown < 3) {
+        if (countdown < 3) {
             const cDom = boxRef.current?.querySelector('#if-content');
             try {
                 if (cDom.style.display === 'none') {
                     cDom.style.display = 'block';
-                    openIframe(location.href);
+                    openIframe(url);
                 }
             } catch (e) {}
-        }*/
+        }
     }, [countdown]);
 
     React.useEffect(() => {
