@@ -27,25 +27,27 @@ export async function jump2pay(values, cb, toastFunc) {
 }
 
 async function jump2renew(link, currentWindow = false) {
-    const { code, msg, info } = await Api.iframe2pay(link).catch((e) => e);
-    if (code === 0) {
-        const { pay_url } = info || {};
-        if (pay_url) {
-            if (currentWindow) {
-                location.href = pay_url;
+    if (link) {
+        const { code, msg, info } = await Api.iframe2pay(link).catch((e) => e);
+        if (code === 0) {
+            const { pay_url } = info || {};
+            if (pay_url) {
+                if (currentWindow) {
+                    location.href = pay_url;
+                } else {
+                    window.open(pay_url, 'webui.makamaka.pay');
+                }
+                return;
             } else {
-                window.open(pay_url, 'webui.makamaka.pay');
+                message.error(msg || Api.ERROR_MESSAGE);
             }
-            return;
         } else {
             message.error(msg || Api.ERROR_MESSAGE);
         }
-    } else {
-        message.error(msg || Api.ERROR_MESSAGE);
-        setTimeout(() => {
-            window.parent.location.href = '/payment';
-        }, 1500);
     }
+    setTimeout(() => {
+        window.parent.location.href = '/payment';
+    }, 1500);
 }
 
 export const DividerMsg = () => (
