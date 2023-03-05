@@ -201,8 +201,7 @@ export const pageState = {
     },
     loading: {
         title: 'REDIRECTING',
-        subTitle: contentCenter(`You are being directed to a third-party payment page.
-                Please complete the payment within 2 minutes`),
+        subTitle: contentCenter(`PLEASE WAIT, WE ARE PREPARING A SERVER FOR YOU`),
         action: (
             <Stack direction="column" justifyContent="center" gap={2} alignItems="center" sx={{ mb: { xs: -0.5, sm: 0.5 } }}>
                 <img src="/assets/rocker.svg" alt="redirecting" />
