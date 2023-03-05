@@ -37,6 +37,8 @@ export const register = ({ email }) => {
 export const queryInstanceUrl = (token) => {
     return axios({
         method: 'post',
+        // 2.5 分钟
+        timeout: 2.5 * 60 * 1000,
         url: '/get_instance_url_by_token',
         data: {
             token

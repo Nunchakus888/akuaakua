@@ -50,7 +50,7 @@
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
-        "deploy": "yarn build && git add . && git status && git commit -am 'fixes' && git push",
+        "deploy": "yarn build && git add . && git status && git commit -am 'Optimized the timeout of getting instance url' && git push",
         "test": "react-scripts test",
         "eject": "react-scripts eject"
     },
