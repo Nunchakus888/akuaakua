@@ -47,7 +47,7 @@ async function jump2renew(link, currentWindow = false) {
     }
     setTimeout(() => {
         window.parent.location.href = '/payment';
-    }, 3000);
+    }, 800);
 }
 
 export const DividerMsg = () => (

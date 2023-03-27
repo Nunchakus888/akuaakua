@@ -94,7 +94,7 @@ const Register = (props) => {
                                         variant="contained"
                                         color="primary"
                                     >
-                                        PAY NOW
+                                        TRY NOW
                                     </Button>
                                 </AnimateButton>
                             </Grid>
